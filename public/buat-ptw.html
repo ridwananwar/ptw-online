@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PHE JAMBI MERANG - PTW Baru</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; list-style: none; text-decoration: none; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f1f5f9; color: #1e293b; display: flex; min-height: 100vh; }
+    .sidebar { width: 260px; background-color: #0f172a; color: white; display: flex; flex-direction: column; box-shadow: 2px 0 10px rgba(0,0,0,0.1); }
+    .brand-section { padding: 20px; border-bottom: 2px solid #0284c7; text-align: center; background-color: #1e293b; }
+    .brand-title { font-size: 16px; font-weight: 800; color: #ffffff; }
+    .brand-sub { font-size: 11px; font-weight: bold; color: #f59e0b; margin-top: 4px; display: block; }
+    .menu-list { padding: 20px 15px; }
+    .menu-item { margin-bottom: 12px; }
+    .menu-link { display: block; padding: 14px 15px; border-radius: 6px; font-size: 14px; font-weight: 700; text-align: center; transition: all 0.2s; }
+    .link-dashboard { background-color: transparent; color: #cbd5e1; border: 1px solid #334155; }
+    .link-dashboard:hover { background-color: #1e293b; color: white; }
+    .link-buat { background-color: #00a859; color: white; }
+    .main-content { flex: 1; display: flex; flex-direction: column; }
+    .navbar { background-color: white; height: 75px; padding: 0 30px; display: flex; align-items: center; justify-content: space-between; border-bottom: 4px solid #ff0000; box-shadow: 0 2px 4px rgba(0,0,0,0.02); gap: 20px; }
+    .nav-left-text { font-size: 14px; font-weight: 700; color: #475569; }
+    .running-text-container { flex: 1; overflow: hidden; background-color: #f8fafc; padding: 8px 15px; border-radius: 6px; border: 1px dashed #cbd5e1; display: flex; align-items: center; }
+    .running-text { font-size: 13px; font-weight: 800; color: #005691; }
+    .running-text span { color: #ef4444; }
+    .logo-container { display: flex; align-items: center; gap: 15px; }
+    .logo-img { height: 42px; width: auto; }
+    .phe-text-box { display: flex; flex-direction: column; border-left: 2px solid #cbd5e1; padding-left: 12px; }
+    .phe-title { font-size: 14px; font-weight: 800; color: #005691; }
+    .phe-sub { font-size: 10px; font-weight: 700; color: #64748b; }
+    .container { padding: 30px; max-width: 800px; width: 100%; margin: 0 auto; }
+    .card-form { background: white; border-radius: 12px; border-top: 5px solid #005691; box-shadow: 0 4px 15px rgba(0,0,0,0.05); padding: 25px; }
+    .form-title { font-size: 18px; font-weight: 800; color: #0f172a; margin-bottom: 20px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; }
+    .form-group { margin-bottom: 18px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 8px; }
+    .form-control { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; color: #1e293b; outline: none; }
+    .checkbox-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 5px 0; }
+    .checkbox-item { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: #475569; }
+    .checkbox-item input { width: 16px; height: 16px; }
+    .form-footer { display: flex; justify-content: flex-end; gap: 12px; margin-top: 25px; border-top: 1px solid #e2e8f0; padding-top: 15px; }
+    .btn { padding: 12px 20px; font-size: 14px; font-weight: 700; border: none; border-radius: 6px; cursor: pointer; }
+    .btn-submit { background-color: #00a859; color: white; }
+    .btn-cancel { background-color: #cbd5e1; color: #475569; }
+  </style>
+</head>
+<body>
+
+  <div class="sidebar">
+    <div class="brand-section">
+      <div class="brand-title">PHE JAMBI MERANG</div>
+      <span class="brand-sub">HSSE WORK CONTROL</span>
+    </div>
+    <ul class="menu-list">
+      <!-- FIXED: Navigasi menu samping kiri diselaraskan menuju rute root "/" -->
+      <li class="menu-item"><a href="/" class="menu-link link-dashboard">HSE DASHBOARD</a></li>
+      <li class="menu-item"><a href="/buat-ptw.html" class="menu-link link-buat">BUAT PTW BARU</a></li>
+    </ul>
+  </div>
+
+  <div class="main-content">
+    <div class="navbar">
+      <div class="nav-left-text">SISTEM VALIDASI K3 DIGITAL</div>
+      <div class="running-text-container">
+        <marquee class="running-text" behavior="scroll" direction="left" scrollamount="5">
+          &lt;&lt;- PERTAMINA AKHLAK <span>..........</span> AMANAH, KOMPETEN, HARMONIS, LOYAL, ADAPTIF dan KOLABORATIF <span>..........</span> PERTAMINA AKHLAK -&gt;&gt;
+        </marquee>
+      </div>
+      <div class="logo-container">
+        <img class="logo-img" src="https://publit.io" alt="Pertamina Logo">
+        <div class="phe-text-box">
+          <span class="phe-title">PERTAMINA</span>
+          <span class="phe-sub">PHE JAMBI MERANG</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="card-form">
+        <div class="form-title">Formulir Pengajuan Izin Kerja Kerja Baru (PTW)</div>
+        
+        <div class="form-body">
+          <div class="form-group">
+            <label>Nama Pemohon / Kontraktor</label>
+            <input type="text" class="form-control" id="namaPemohon" placeholder="Masukkan nama lengkap vendor/kontraktor" required>
+          </div>
+          <div class="form-group">
+            <label>Kategori Pekerjaan Utama</label>
+            <select class="form-control" id="jenisPekerjaan" required>
+              <option value="">-- Pilih Jenis Pekerjaan K3 --</option>
+              <option value="Hot Work">Hot Work (Pengelasan / Gerinda)</option>
+              <option value="Cold Work">Cold Work (Perbaikan Mekanik)</option>
+              <option value="Confined Space">Confined Space (Ruang Terbatas)</option>
+              <option value="Working at Height">Working at Height (Ketinggian)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Lokasi Kerja Jambi Merang</label>
+            <input type="text" class="form-control" id="lokasi" placeholder="Contoh: Kilang Grid B3 / Area Tanki" required>
+          </div>
+          <div class="form-group">
+            <label>Persyaratan Proteksi APD Wajib</label>
+            <div class="checkbox-group">
+              <div class="checkbox-item"><input type="checkbox" value="Safety Helmet" id="apd1"><label for="apd1">Safety Helmet</label></div>
+              <div class="checkbox-item"><input type="checkbox" value="Safety Shoes" id="apd2"><label for="apd2">Safety Shoes</label></div>
+              <div class="checkbox-item"><input type="checkbox" value="Safety Glasses" id="apd3"><label for="apd3">Safety Glasses</label></div>
+              <div class="checkbox-item"><input type="checkbox" value="Body Harness" id="apd4"><label for="apd4">Body Harness</label></div>
+            </div>
+          </div>
+          <div class="form-footer">
+            <button type="button" class="btn btn-cancel" onclick="window.location.href='/'">Batal</button>
+            <button type="button" class="btn btn-submit" onclick="kirimDataPermit()">Ajukan Permit</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function kirimDataPermit() {
+      const pemohon = document.getElementById('namaPemohon').value;
+      const jenis = document.getElementById('jenisPekerjaan').value;
+      const lokasi = document.getElementById('lokasi').value;
+
+      if(!pemohon || !jenis || !lokasi) {
+        alert('Harap isi semua kolom formulir K3 yang wajib!');
+        return;
+      }
+
+      const apd = [];
+      if(document.getElementById('apd1').checked) apd.push("Safety Helmet");
+      if(document.getElementById('apd2').checked) apd.push("Safety Shoes");
+      if(document.getElementById('apd3').checked) apd.push("Safety Glasses");
+      if(document.getElementById('apd4').checked) apd.push("Body Harness");
+
+      fetch('/api/ptw', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pemohon, jenis, lokasi, apd })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if(data.success) {
+          alert('Permit Pengajuan Berhasil Terkirim ke HSSE Control!');
+          // FIXED FOR EJS ENGINE: Mengembalikan browser langsung menuju rute induk "/" murni
+          window.location.href = '/'; 
+        }
+      })
+      .catch(err => alert('Koneksi server terganggu!'));
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PHE JAMBI MERANG - PTW Online</title>
+  
+  <style>
+    /* RESET DATA LAYOUT */
+    * { box-sizing: border-box; margin: 0; padding: 0; list-style: none; text-decoration: none; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f1f5f9; color: #1e293b; display: flex; min-height: 100vh; }
+
+    /* SIDEBAR PANEL KIRI */
+    .sidebar { width: 260px; background-color: #0f172a; color: white; display: flex; flex-direction: column; box-shadow: 2px 0 10px rgba(0,0,0,0.1); }
+    .brand-section { padding: 20px; border-bottom: 2px solid #0284c7; text-align: center; background-color: #1e293b; }
+    .brand-title { font-size: 16px; font-weight: 800; letter-spacing: 0.5px; color: #ffffff; }
+    .brand-sub { font-size: 11px; font-weight: bold; color: #f59e0b; margin-top: 4px; display: block; letter-spacing: 0.5px; }
+    
+    /* DAFTAR MENU RATA TENGAH & SEJAJAR */
+    .menu-list { padding: 20px 15px; }
+    .menu-item { margin-bottom: 12px; }
+    .menu-link { 
+      display: block; 
+      padding: 14px 15px; 
+      border-radius: 6px; 
+      font-size: 14px; 
+      font-weight: 700; 
+      text-align: center; 
+      letter-spacing: 0.5px;
+      transition: all 0.2s; 
+    }
+    .link-dashboard { background-color: #0284c7; color: white; }
+    .link-dashboard:hover { background-color: #0369a1; }
+    .link-buat { background-color: #00a859; color: white; }
+    .link-buat:hover { background-color: #008744; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+
+    /* INTEGRASI AREA KANAN */
+    .main-content { flex: 1; display: flex; flex-direction: column; }
+    
+    /* TOP NAVBAR DENGAN RUNNING TEXT ADAPTIF */
+    .navbar { background-color: white; height: 75px; padding: 0 30px; display: flex; align-items: center; justify-content: space-between; border-bottom: 4px solid #ff0000; box-shadow: 0 2px 4px rgba(0,0,0,0.02); gap: 20px; }
+    .nav-left-text { font-size: 14px; font-weight: 700; color: #475569; letter-spacing: 0.5px; white-space: nowrap; flex-shrink: 0; }
+    
+    /* GAYA VISUAL TEKS BERJALAN BOLD */
+    .running-text-container { flex: 1; overflow: hidden; background-color: #f8fafc; padding: 8px 15px; border-radius: 6px; border: 1px dashed #cbd5e1; display: flex; align-items: center; }
+    .running-text { font-size: 13px; font-weight: 800; color: #005691; letter-spacing: 0.5px; } /* font-weight 800 membuat teks menjadi BOLD tebal */
+    .running-text span { color: #ef4444; font-weight: 900; } /* Titik-titik pembatas juga ditebalkan berwarna hitam */
+
+    /* CONTAINER LOGO */
+    .logo-container { display: flex; align-items: center; gap: 15px; flex-shrink: 0; }
+    .logo-img { height: 42px; width: auto; object-fit: contain; }
+    .phe-text-box { display: flex; flex-direction: column; justify-content: center; border-left: 2px solid #cbd5e1; padding-left: 12px; height: 35px; }
+    .phe-title { font-size: 14px; font-weight: 800; color: #005691; letter-spacing: 0.5px; line-height: 1.2; }
+    .phe-sub { font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase; }
+
+    /* LAYOUT UTAMA */
+    .container { padding: 30px; max-width: 1400px; width: 100%; margin: 0 auto; }
+    .page-title { font-size: 22px; font-weight: 800; color: #0f172a; margin-bottom: 25px; }
+
+    /* METRIK K3 BLOCK */
+    .row-stats { display: flex; gap: 20px; margin-bottom: 30px; }
+    .stat-card { flex: 1; padding: 20px; border-radius: 10px; color: white; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+    .bg-aktif { background: linear-gradient(135deg, #0284c7, #0369a1); }
+    .bg-pending { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .stat-num { font-size: 28px; font-weight: 800; margin-bottom: 5px; }
+    .stat-label { font-size: 11px; font-weight: 700; letter-spacing: 0.5px; opacity: 0.9; }
+
+    /* MONITORING TABEL */
+    .card-table { background: white; border-radius: 10px; border-top: 4px solid #005691; box-shadow: 0 4px 12px rgba(0,0,0,0.03); overflow: hidden; }
+    .card-header { padding: 20px; font-size: 15px; font-weight: 700; color: #0f172a; border-bottom: 1px solid #e2e8f0; background-color: #f8fafc; }
+    .table-responsive { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    th { background-color: #f1f5f9; padding: 15px; font-size: 11px; font-weight: 700; text-transform: uppercase; color: #475569; letter-spacing: 0.5px; border-bottom: 2px solid #e2e8f0; }
+    td { padding: 15px; font-size: 13px; border-bottom: 1px solid #e2e8f0; color: #334155; vertical-align: middle; }
+    tr:hover { background-color: #f8fafc; }
+
+    /* INDIKATOR STATUS */
+    .badge-waiting { background-color: #fef3c7; color: #92400e; border: 1px solid #fde68a; padding: 6px 12px; font-size: 11px; font-weight: 700; border-radius: 50px; display: inline-block; }
+    .badge-approved { background-color: #dcfce7; color: #166534; border: 1px solid #bbf7d0; padding: 6px 12px; font-size: 11px; font-weight: 700; border-radius: 50px; display: inline-block; }
+    
+    .btn-approve { background-color: #00a859; color: white; border: none; font-weight: 700; padding: 8px 14px; font-size: 12px; border-radius: 6px; cursor: pointer; transition: 0.2s; }
+    .btn-approve:hover { background-color: #008744; transform: translateY(-1px); }
+    .btn-valid { background-color: #cbd5e1; color: #64748b; border: none; font-weight: 700; padding: 8px 14px; font-size: 12px; border-radius: 6px; cursor: not-allowed; }
+  </style>
+</head>
+<body>
+  <!-- PANEL UTAMA KIRI -->
+  <div class="sidebar">
+    <div class="brand-section">
+      <div class="brand-title">PHE JAMBI MERANG</div>
+      <span class="brand-sub">HSSE WORK CONTROL</span>
+    </div>
+    
+    <!-- MENU LIST SEJAJAR DAN RATA TENGAH -->
+    <ul class="menu-list">
+      <li class="menu-item">
+        <a href="index.html" class="menu-link link-dashboard">HSE DASHBOARD</a>
+      </li>
+      <li class="menu-item">
+        <a href="buat-ptw.html" class="menu-link link-buat">BUAT PTW BARU</a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- PANEL KONTEN KANAN -->
+  <div class="main-content">
+    
+    <!-- TOP NAVBAR -->
+    <div class="navbar">
+      <div class="nav-left-text">SISTEM VALIDASI K3 DIGITAL</div>
+
+       <!-- ELEMEN RUNNING TEXT BARU -->
+      <div class="running-text-container">
+        <marquee class="running-text" behavior="scroll" direction="left" scrollamount="5">
+          <<- PERTAMINA AKHLAK   <span>..........</span> AMANAH, KOMPETEN, HARMONIS, LOYAL, ADAPTIF dan KOLABORATIF <span>..........</span>   PERTAMINA AKHLAK ->>
+        </marquee>
+      </div>
+
+      <!-- INTEGRASI LOGO PERTAMINA SESUAI GAMBAR DAN TEKS IDENTITAS -->
+      <div class="logo-container">
+        <!-- Memanggil gambar logo asli resmi melalui CDN terpercaya -->
+        <img class="logo-img" src="
+https://ridwananwar.publit.io/file/logo-pertamina.png" alt="Pertamina Logo">
+        <div class="phe-text-box">
+          <span class="phe-title">PERTAMINA</span>
+          <span class="phe-sub">PHE JAMBI MERANG</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- AREA MONITORING UTAMA -->
+    <div class="container">
+      <h1 class="page-title">Permit to Work (PTW) Control Center</h1>
+      
+      <div class="row-stats">
+        <div class="stat-card bg-aktif">
+          <div class="stat-num" id="countActive">0</div>
+          <div class="stat-label">PTW APPROVED / AKTIF</div>
+        </div>
+        <div class="stat-card bg-pending">
+          <div class="stat-num" id="countPending">0</div>
+          <div class="stat-label">MENUNGGU APPROVAL HSSE</div>
+        </div>
+      </div>
+
+      <div class="card-table">
+        <div class="card-header">Monitoring Validitas Izin Kerja Lapangan</div>
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 8%">No ID</th>
+                <th style="width: 22%">Kontraktor / Pemohon</th>
+                <th style="width: 15%">Kategori Pekerjaan</th>
+                <th style="width: 20%">Lokasi Kerja Jambi Merang</th>
+                <th style="width: 15%">Proteksi APD</th>
+                <th style="width: 12%">Status Dokumen</th>
+                <th style="width: 8%">Otorisasi</th>
+              </tr>
+            </thead>
+            <tbody id="tabelPTW"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT ENGINE -->
+  <script>
+    function muatDataPTW() {
+      fetch('/api/ptw')
+        .then(res => res.json())
+        .then(data => {
+          const tabel = document.getElementById('tabelPTW');
+          tabel.innerHTML = ''; 
+
+          let pending = data.filter(i => i.status === 'Menunggu Approval').length;
+          let active = data.filter(i => i.status !== 'Menunggu Approval').length;
+          
+          document.getElementById('countPending').innerText = pending;
+          document.getElementById('countActive').innerText = active;
+
+          data.forEach(item => {
+            let isPending = item.status === 'Menunggu Approval';
+            let badgeClass = isPending ? 'badge-waiting' : 'badge-approved';
+            
+            let baris = `<tr>
+              <td style="font-weight: bold; color: #64748b;">#00${item.id}</td>
+              <td style="font-weight: 700; color: #0f172a;">${item.pemohon}</td>
+              <td style="font-weight: bold; color: #0284c7;">${item.jenis}</td>
+              <td>${item.lokasi}</td>
+              <td style="color: #64748b; font-size: 12px;">${item.apd.join(', ') || '-'}</td>
+              <td><span class="${badgeClass}">${item.status}</span></td>
+              <td>
+                ${isPending 
+                  ? `<button class="btn-approve" onclick="setujuiPTW(${item.id})">Approve</button>` 
+                  : `<button class="btn-valid" disabled>Valid</button>`}
+              </td>
+            </tr>`;
+            tabel.innerHTML += baris;
+          });
+        })
+        .catch(err => console.error("Gagal terhubung ke API:", err));
+    }
+
+    function setujuiPTW(id) {
+      if(confirm('Otorisasi Dokumen: Setujui pengajuan izin kerja ini selaku HSSE Officer PHE Jambi Merang?')) {
+        fetch(`/api/ptw/approve/${id}`, { method: 'POST' })
+          .then(res => res.json())
+          .then(data => { muatDataPTW(); });
+      }
+    }
+
+    muatDataPTW();
+  </script>
+</body>
+</html>
