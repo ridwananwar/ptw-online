@@ -7,8 +7,8 @@
   <style> 
     * { box-sizing: border-box; margin: 0; padding: 0; list-style: none; text-decoration: none; } 
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f1f5f9; color: #1e293b; display: flex; min-height: 100vh; } 
-    .sidebar { width: 260px; background-color: #0f172a; color: white; display: flex; flex-direction: column; box-shadow: 2px 0 10px rgba(0,0,0,0.1); } 
-    .brand-section { padding: 20px; border-bottom: 2px solid #0284c7; text-align: center; background-color: #1e293b; } 
+    .sidebar { width: 200px; background-color: #0f172a; color: white; display: flex; flex-direction: column; box-shadow: 2px 0 15px rgba(0,0,0,0.1); } 
+    .brand-section { padding: 15px; border-bottom: 2px solid #0284c7; text-align: center; background-color: #1e293b; } 
     .brand-title { font-size: 16px; font-weight: 800; color: #ffffff; } 
     .brand-sub { font-size: 11px; font-weight: bold; color: #f59e0b; margin-top: 4px; display: block; } 
     .menu-list { padding: 20px 15px; } 
@@ -29,7 +29,7 @@
     .phe-sub { font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase; } 
     .container { padding: 30px; max-width: 1400px; width: 100%; margin: 0 auto; } 
     .page-title { font-size: 22px; font-weight: 800; color: #0f172a; margin-bottom: 25px; } 
-    .row-stats { display: flex; gap: 20px; margin-bottom: 30px; } 
+    .row-stats { display: flex; gap: 10px; margin-bottom: 40px; } 
     .stat-card { flex: 1; padding: 20px; border-radius: 10px; color: white; box-shadow: 0 4px 6px rgba(0,0,0,0.05); } 
     .bg-aktif { background: linear-gradient(135deg, #0284c7, #0369a1); } 
     .bg-pending { background: linear-gradient(135deg, #f59e0b, #d97706); } 
@@ -80,7 +80,7 @@
         </marquee> 
       </div> 
       <div class="logo-container"> 
-        <img class="logo-img" src="https://publit.io" alt="Pertamina Logo"> 
+        <img class="logo-img" src="https://ridwananwar.publit.io/file/logo-pertamina.png" alt="Pertamina Logo"> 
         <div class="phe-text-box"> <span class="phe-title">PERTAMINA</span> <span class="phe-sub">PHE JAMBI MERANG</span> </div> 
       </div> 
     </div> 
@@ -106,7 +106,7 @@
                 <th style="width: 8%">No ID</th> 
                 <th style="width: 22%">Kontraktor / Pemohon</th> 
                 <th style="width: 15%">Kategori Pekerjaan</th> 
-                <th style="width: 20%">Lokasi Kerja Jambi Merang</th> 
+                <th style="width: 20%">Area Kerja JambiMerang </th> 
                 <th style="width: 15%">Proteksi APD</th> 
                 <th style="width: 12%">Status Dokumen</th> 
                 <th style="width: 8%">Otorisasi</th> 
@@ -136,7 +136,8 @@
                         <div style="text-align:center; display:flex; flex-direction:column; gap:5px; align-items:center;">
                           <img class="img-ttd" src="<%= item.tandaTangan %>" alt="Sign">
                           <<span style="font-size:10px;font-weight:bold;color:#166534;">HSSE SIGNED</span>
-						<button class="btn-print-pdf" onclick="prosesCetakPintar('<%= item.id %>', '<%= item.pemohon %>', '<%= item.jenis %>', '<%= item.lokasi %>', '<%= listAPD %>', '<%= item.tandaTangan %>')">Cetak PDF</button>
+		<a href="/cetak/<%= item.id %>" target="_blank" class="btn-print-pdf">Cetak PDF</a>
+
 </div>
                       <% } %>
                     </td>
@@ -229,13 +230,12 @@
       </div> 
     </div> 
   </div> 
-   <script> 
+  <script> 
     var selectedIdPTW = null; 
     var canvas = document.getElementById('signatureCanvas'); 
     var ctx = canvas.getContext('2d'); 
     var drawing = false; 
 
-    // Fungsi pembuka kotak dialog pop-up tanda tangan digital
     function bukaModal(id) { 
       selectedIdPTW = id; 
       document.getElementById('signatureModal').style.display = 'flex'; 
@@ -244,39 +244,17 @@
       ctx.clearRect(0, 0, canvas.width, canvas.height); 
     } 
 
-    // Fungsi penutup kotak dialog pop-up tanda tangan digital
     function tutupModal() { 
       document.getElementById('signatureModal').style.display = 'none'; 
       selectedIdPTW = null; 
     } 
 
-    // Penghitung koordinat posisi kursor mouse pada kanvas putih
-       // FIX MUTLAK INDEKS [0]: DIJAMIN 100% TERBUKA DAN BISA DIGORES PAKAI JARI DI HP
-    function dapatkanPosisiCoretan(e) {
-      var boksKanvas = canvas.getBoundingClientRect();
-      
-      // JALUR KHUSUS HANDPHONE: Membongkar koordinat array dari sentuhan jari ke-1
-      if (e.touches && e.touches.length > 0) {
-        return {
-          x: e.touches[0].clientX - boksKanvas.left,
-          y: e.touches[0].clientY - boksKanvas.top
-        };
-      }
-      
-      // JALUR KHUSUS LAPTOP: Menggunakan kursor mouse biasa
-      return {
-        x: e.clientX - boksKanvas.left,
-        y: e.clientY - boksKanvas.top
-      };
-    }
-
-
     // EVENT MOUSE (UNTUK OPERASIONAL LAPTOP RUMAH)
     canvas.addEventListener('mousedown', function(e) {
       drawing = true;
-      var pos = dapatkanPosisiCoretan(e);
       ctx.beginPath();
-      ctx.moveTo(pos.x, pos.y);
+      var rect = canvas.getBoundingClientRect();
+      ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
       ctx.strokeStyle = "rgb(0, 86, 145)"; 
       ctx.lineWidth = 4; 
       ctx.lineCap = "round";
@@ -285,46 +263,49 @@
 
     canvas.addEventListener('mousemove', function(e) {
       if (!drawing) return;
-      var pos = dapatkanPosisiCoretan(e);
-      ctx.lineTo(pos.x, pos.y);
+      var rect = canvas.getBoundingClientRect();
+      ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
       ctx.stroke();
     });
 
     canvas.addEventListener('mouseup', function() { drawing = false; });
     canvas.addEventListener('mouseleave', function() { drawing = false; });
 
-    // EVENT TOUCH / SENTUHAN (KHUSUS UNTUK OPERASIONAL DI LAYAR SENTUH HP)
+    // FIX MUTLAK INDEKS NOL [0]: DIJAMIN 100% TERBUKA DAN BISA DIGORES PAKAI JARI DI SEMUA HP
     canvas.addEventListener('touchstart', function(e) {
       drawing = true;
-      var pos = dapatkanPosisiCoretan(e);
       ctx.beginPath();
-      ctx.moveTo(pos.x, pos.y);
+      var rect = canvas.getBoundingClientRect();
+      
+      // Ambil sentuhan dari jari pertama menggunakan indeks [0] yang valid
+      var jariPertama = e.targetTouches[0]; 
+      
+      ctx.moveTo(jariPertama.clientX - rect.left, jariPertama.clientY - rect.top);
       ctx.strokeStyle = "rgb(0, 86, 145)";
       ctx.lineWidth = 4;
       ctx.lineCap = "round";
       ctx.lineJoin = "round";
-      // Mencegah layar HP naik-turun ikut bergeser saat jari sedang menggores tanda tangan
       e.preventDefault(); 
     }, { passive: false });
 
     canvas.addEventListener('touchmove', function(e) {
       if (!drawing) return;
-      var pos = dapatkanPosisiCoretan(e);
-      ctx.lineTo(pos.x, pos.y);
+      var rect = canvas.getBoundingClientRect();
+      
+      // Ambil pergeseran dari jari pertama menggunakan indeks [0] yang valid
+      var jariPertama = e.targetTouches[0]; 
+      
+      ctx.lineTo(jariPertama.clientX - rect.left, jariPertama.clientY - rect.top);
       ctx.stroke();
       e.preventDefault();
     }, { passive: false });
 
-    canvas.addEventListener('touchend', function() { 
-      drawing = false; 
-    });
+    canvas.addEventListener('touchend', function() { drawing = false; });
 
-    // Perintah tombol hapus coretan ulang
     document.getElementById('btnClear').addEventListener('click', function() { 
       ctx.clearRect(0, 0, canvas.width, canvas.height); 
     }); 
 
-    // Perintah kirim gambar tanda tangan ke database SQLite3
     document.getElementById('btnSaveTTD').addEventListener('click', function() { 
       var stringGambar = canvas.toDataURL('image/png'); 
       fetch('/api/approve-ptw-digital/' + selectedIdPTW, { 
@@ -338,4 +319,6 @@
         window.location.reload(); 
       }); 
     }); 
-
+  </script> 
+</body> 
+</html>

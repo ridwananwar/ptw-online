@@ -230,13 +230,12 @@
       </div> 
     </div> 
   </div> 
-   <script> 
+  <script> 
     var selectedIdPTW = null; 
     var canvas = document.getElementById('signatureCanvas'); 
     var ctx = canvas.getContext('2d'); 
     var drawing = false; 
 
-    // Fungsi pembuka kotak dialog pop-up tanda tangan digital
     function bukaModal(id) { 
       selectedIdPTW = id; 
       document.getElementById('signatureModal').style.display = 'flex'; 
@@ -245,27 +244,17 @@
       ctx.clearRect(0, 0, canvas.width, canvas.height); 
     } 
 
-    // Fungsi penutup kotak dialog pop-up tanda tangan digital
     function tutupModal() { 
       document.getElementById('signatureModal').style.display = 'none'; 
       selectedIdPTW = null; 
     } 
 
-    // Penghitung koordinat posisi kursor mouse pada kanvas putih
-    function dapatkanPosisiCoretan(e) {
-      var boksKanvas = canvas.getBoundingClientRect();
-      return {
-        x: e.clientX - boksKanvas.left,
-        y: e.clientY - boksKanvas.top
-      };
-    }
-
-    // Aliran logika guratan kuas mouse tinta biru Pertamina
+    // EVENT MOUSE (UNTUK OPERASIONAL LAPTOP RUMAH)
     canvas.addEventListener('mousedown', function(e) {
       drawing = true;
-      var pos = dapatkanPosisiCoretan(e);
       ctx.beginPath();
-      ctx.moveTo(pos.x, pos.y);
+      var rect = canvas.getBoundingClientRect();
+      ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
       ctx.strokeStyle = "rgb(0, 86, 145)"; 
       ctx.lineWidth = 4; 
       ctx.lineCap = "round";
@@ -274,80 +263,62 @@
 
     canvas.addEventListener('mousemove', function(e) {
       if (!drawing) return;
-      var pos = dapatkanPosisiCoretan(e);
-      ctx.lineTo(pos.x, pos.y);
+      var rect = canvas.getBoundingClientRect();
+      ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
       ctx.stroke();
     });
 
     canvas.addEventListener('mouseup', function() { drawing = false; });
     canvas.addEventListener('mouseleave', function() { drawing = false; });
 
-    // Perintah tombol hapus coretan ulang
+    // FIX MUTLAK INDEKS NOL [0]: DIJAMIN 100% TERBUKA DAN BISA DIGORES PAKAI JARI DI SEMUA HP
+    canvas.addEventListener('touchstart', function(e) {
+      drawing = true;
+      ctx.beginPath();
+      var rect = canvas.getBoundingClientRect();
+      
+      // Ambil sentuhan dari jari pertama menggunakan indeks [0] yang valid
+      var jariPertama = e.targetTouches[0]; 
+      
+      ctx.moveTo(jariPertama.clientX - rect.left, jariPertama.clientY - rect.top);
+      ctx.strokeStyle = "rgb(0, 86, 145)";
+      ctx.lineWidth = 4;
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      e.preventDefault(); 
+    }, { passive: false });
+
+    canvas.addEventListener('touchmove', function(e) {
+      if (!drawing) return;
+      var rect = canvas.getBoundingClientRect();
+      
+      // Ambil pergeseran dari jari pertama menggunakan indeks [0] yang valid
+      var jariPertama = e.targetTouches[0]; 
+      
+      ctx.lineTo(jariPertama.clientX - rect.left, jariPertama.clientY - rect.top);
+      ctx.stroke();
+      e.preventDefault();
+    }, { passive: false });
+
+    canvas.addEventListener('touchend', function() { drawing = false; });
+
     document.getElementById('btnClear').addEventListener('click', function() { 
       ctx.clearRect(0, 0, canvas.width, canvas.height); 
     }); 
 
-    // =========================================================================
-    //  SAMBUNGAN UTAMA: MEMAKSA TOMBOL KONFIRMASI MENGUNCI DATA KE SQLITE3
-    // =========================================================================
     document.getElementById('btnSaveTTD').addEventListener('click', function() { 
-      // Mengubah goresan kanvas menjadi teks string gambar base64 data portabel
       var stringGambar = canvas.toDataURL('image/png'); 
-      
-      // Kirim paksa string gambar menuju rute pos database server backend
       fetch('/api/approve-ptw-digital/' + selectedIdPTW, { 
           method: 'POST', 
           headers: { 'Content-Type': 'application/json' }, 
           body: JSON.stringify({ tandaTangan: stringGambar }) 
       }) 
-      .then(function(res) { 
-        return res.json(); 
-      }) 
-      .then(function(data) { 
-        // 1. Tutup jendela popup tanda tangan melayang
+      .then(function(res) { return res.json(); }) 
+      .then(function() { 
         tutupModal(); 
-        
-        // 2. Muat ulang halaman secara bersih agar sistem memicu render status hijau baru
         window.location.reload(); 
-      })
-      .catch(function(err) {
-        alert("Koneksi database server terganggu!");
-      });
+      }); 
     }); 
-
-    // Sistem penarik dokumen cetak lembar cetakan PDF
-	function prosesCetakPintar(id, pemohon, jenis, lokasi, apd, tandaTangan) {
-      var areaCetak = document.getElementById('cetakLembarArea');
-      areaCetak.innerHTML = ''; 
-
-      var containerUtama = document.createElement('div');
-      containerUtama.style.padding = '40px';
-      containerUtama.style.fontFamily = 'Arial, sans-serif';
-      containerUtama.style.background = 'white';
-      containerUtama.style.color = 'black';
-      containerUtama.style.width = '100%';
-
-      containerUtama.innerHTML = '<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:3px solid #ff0000; padding-bottom:15px; margin-bottom:25px;">' +
-        '<div style="flex:1;"><h2 style="color:#005691; margin:0; font-size:20px;">PERMIT TO WORK (PTW)</h2><p style="margin:5px 0 0 0; font-size:12px; font-weight:bold; color:#64748b;">SISTEM VALIDASI K3 DIGITAL</p></div>' +
-        '<div style="text-align:right; flex:1;"><h3 style="margin:0; font-size:14px; color:#1e293b;">PHE JAMBI MERANG</h3><p style="margin:2px 0 0 0; font-size:10px; color:#64748b; font-weight:700;">SUBHOLDING UPSTREAM</p></div>' +
-        '</div>' +
-        '<div style="margin-bottom:20px;"><p style="font-size:14px; font-weight:bold; color:#005691;">NOMOR DOKUMEN PERMIT: <span style="color:#ef4444;">#00' + id + '</span></p></div>' +
-        '<table style="width:100%; border-collapse:collapse; margin-bottom:30px; font-size:13px;">' +
-        '<tr><td style="padding:10px; border:1px solid #cbd5e1; font-weight:bold; width:30%; background-color:#f8fafc;">Nama Kontraktor</td><td style="padding:10px; border:1px solid #cbd5e1;">' + pemohon + '</td></tr>' +
-        '<tr><td style="padding:10px; border:1px solid #cbd5e1; font-weight:bold; background-color:#f8fafc;">Kategori Pekerjaan</td><td style="padding:10px; border:1px solid #cbd5e1; font-weight:bold; color:#0284c7;">' + jenis + '</td></tr>' +
-        '<tr><td style="padding:10px; border:1px solid #cbd5e1; font-weight:bold; background-color:#f8fafc;">Lokasi Area Kerja</td><td style="padding:10px; border:1px solid #cbd5e1;">' + lokasi + '</td></tr>' +
-        '<tr><td style="padding:10px; border:1px solid #cbd5e1; font-weight:bold; background-color:#f8fafc;">Persyaratan APD</td><td style="padding:10px; border:1px solid #cbd5e1; color:#475569;">' + apd + '</td></tr>' +
-        '<tr><td style="padding:10px; border:1px solid #cbd5e1; font-weight:bold; background-color:#f8fafc;">Status Validitas</td><td style="padding:10px; border:1px solid #cbd5e1; font-weight:700; color:#166534;">APPROVED / VALID DOKUMEN</td></tr>' +
-        '</table>' +
-        '<div style="display:flex; justify-content:flex-end; margin-top:50px;">' +
-        '<div style="text-align:center; width:200px;"><p style="font-size:12px; font-weight:bold; margin-bottom:10px;">Disetujui Oleh,<br>HSSE Department Officer</p>' +
-        '<img src="' + tandaTangan + '" style="max-height:60px; width:auto; border:1px solid #cbd5e1; padding:2px; border-radius:4px; margin-bottom:5px;">' +
-        '<p style="font-size:11px; font-weight:bold; color:#166534; margin:0;">PHE JAMBI MERANG VALIDATED</p></div>' +
-        '</div>';
-
-      areaCetak.appendChild(containerUtama);
-      window.print();
-    }
   </script> 
 </body> 
 </html>
