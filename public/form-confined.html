@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PTW - Confined Space (Ruang Terbatas)</title>
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; background: #f1f5f9; padding: 20px; color: #1e293b; }
+    .card { background: white; padding: 30px; border-radius: 12px; max-width: 650px; margin: 0 auto; border-top: 6px solid #f59e0b; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    h2 { color: #f59e0b; text-align: center; margin-bottom: 5px; font-size: 20px; }
+    h3 { text-align: center; font-size: 13px; color: #64748b; margin-bottom: 25px; font-weight: normal; }
+    .section-title { font-size: 14px; font-weight: bold; color: #f59e0b; margin: 20px 0 10px 0; border-bottom: 1px dashed #cbd5e1; padding-bottom: 4px; }
+    .form-group { margin-bottom: 15px; }
+    label { display: block; font-size: 12px; font-weight: bold; color: #475569; margin-bottom: 6px; }
+    input[type="text"], select { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; outline: none; background: white; }
+    input:focus, select:focus { border-color: #f59e0b; }
+    .box-info { background: #f8fafc; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0; font-size: 12px; margin-bottom: 8px; }
+    .box-info strong { color: #f59e0b; }
+    .btn-submit { width: 100%; padding: 14px; background: #f59e0b; color: white; border: none; font-size: 14px; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 20px; }
+    .btn-submit:hover { background: #b45309; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Permit To Work (PTW)</h2>
+    <h3>Confined Space - Ruang Terbatas</h3>
+    
+    <form id="confForm">
+      <div class="section-title">a. Deskripsi Pekerjaan</div>
+      
+      <div class="form-group">
+        <label>Perusahaan / Kontraktor Pemohon</label>
+        <input type="text" id="pemohon" placeholder="Contoh: PT. Jambi Cleaning Tank" required>
+      </div>
+      
+      <div class="form-group">
+        <label>Pilih Stasiun / Area Kerja Utama</label>
+        <select id="stasiun" required>
+          <option value="">-- Pilih Area Kerja --</option>
+          <option value="Sungai Kenawang ( SKN )">Sungai Kenawang ( SKN )</option>
+          <option value="Pulai Gading ( PGD )">Pulai Gading ( PGD )</option>
+          <option value="TGI METERING ( TGI )">TGI METERING ( TGI )</option>
+          <option value="GRISSIK METERING ( GRS )">GRISSIK METERING ( GRS )</option>
+          <option value="NORTH GERGAI FACILITY ( NGF )">NORTH GERGAI FACILITY ( NGF )</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Titik Lokasi Spesifik Pekerjaan (Confined Space Area)</label>
+        <select id="titik_spesifik" required>
+          <option value="">-- Pilih Titik Ruang Terbatas --</option>
+          <option value="Inside Storage Tank T-202 (Sludge Tank)">Inside Storage Tank T-202 (Sludge Tank)</option>
+          <option value="Inside Fuel Gas Vessel / Separator">Inside Fuel Gas Vessel / Separator</option>
+          <option value="Area Bak Kontrol / Sumps Pit">Area Bak Kontrol / Sumps Pit</option>
+          <option value="Inside Open/Closed Drain Tank">Inside Open/Closed Drain Tank</option>
+        </select>
+        <input type="text" class="form-control" id="lokasi" placeholder="Contoh: Pembersihan Bahagian Dalam Tanki/Separator" required>
+      </div>
+
+      <div class="form-group">
+        <label>Nama Fire Watcher / Standby Person (Wajib Ada)</label>
+        <input type="text" id="watcher" placeholder="Masukkan nama petugas jaga luar..." required>
+         <div class="form-group">
+          <label>Lama Pengerjaan (Hari/Jam)</label>
+          <input type="text" id="lama" placeholder="Contoh: 12 Jam" required>
+        </div>
+        <div class="form-group">
+          <label>Jumlah Personel yang Terlibat</label>
+          <input type="number" id="personel" value="0" min="1" required>
+        </div>
+      </div>
+
+      <div class="section-title">b. Identifikasi Bahaya dan Resiko (Confined Space)</div>
+      <div class="box-info"><strong>Hazard:</strong> Kekurangan Oksigen / Akumulasi Gas Beracun (H2S / CO) / Ruang Sempit Terperangkap</div>
+      <div class="box-info"><strong>Control Wajib:</strong> Forced Ventilation (Blower), Gas Detector Terkalibrasi, Petugas Jaga Standby di Luar, dan SCBA terpasang dekat manhole.</div>
+
+      <button type="submit" class="btn-submit">Ajukan Permit Confined Space</button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('confForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // Mengunci APD & Safety Alat Confined Space masuk database
+      var apdConf = ["Gas Detector", "SCBA Apparatus", "Forced Blower", "Safety Helmet", "Safety Shoes"];
+      
+      // Menggabungkan pilihan Stasiun Utama dengan Pilihan Titik Spesifik Ruang Terbatas
+      var areaGabungan = document.getElementById('stasiun').value + " - " + document.getElementById('titik_spesifik').value;
+      
+      // Mengemas detail tambahan nama Fire Watcher petugas jaga luar
+      var detailTambahan = " (Watcher: " + document.getElementById('watcher').value + " | Monitor Udara: Aktif)";
+      
+      var dataKirim = {
+        pemohon: document.getElementById('pemohon').value,
+        jenis: "Confined Space - Ruang Terbatas",
+        lokasi: areaGabungan + detailTambahan,
+        apd: apdConf
+      };
+
+      // FIX SIRKUIT UTAMA: Mengambil respons JSON server agar SQLite3 sukses mengunci data
+      fetch('/api/ptw', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dataKirim)
+      })
+      .then(function(res) { 
+        return res.json(); 
+      })
+      .then(function(data) {
+        // Sukses! Langsung lempar halaman kembali ke Dashboard Utama
+        window.location.href = '/';
+      })
+      .catch(function(err) {
+        alert("Gagal mengirim registrasi form ke server!");
+      });
+    });
+  </script>
+</body>
+</html>

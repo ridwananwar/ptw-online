@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PTW - Cold Work</title>
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; background: #f1f5f9; padding: 20px; color: #1e293b; }
+    .card { background: white; padding: 30px; border-radius: 12px; max-width: 650px; margin: 0 auto; border-top: 6px solid #0284c7; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    h2 { color: #0284c7; text-align: center; margin-bottom: 5px; font-size: 20px; }
+    h3 { text-align: center; font-size: 13px; color: #64748b; margin-bottom: 25px; font-weight: normal; }
+    .section-title { font-size: 14px; font-weight: bold; color: #0284c7; margin: 20px 0 10px 0; border-bottom: 1px dashed #cbd5e1; padding-bottom: 4px; }
+    .form-group { margin-bottom: 15px; }
+    label { display: block; font-size: 12px; font-weight: bold; color: #475569; margin-bottom: 6px; }
+    input[type="text"], input[type="number"] { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; outline: none; }
+    input:focus { border-color: #0284c7; }
+    .box-info { background: #f8fafc; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0; font-size: 12px; margin-bottom: 8px; }
+    .box-info strong { color: #0284c7; }
+    .btn-submit { width: 100%; padding: 14px; background: #0284c7; color: white; border: none; font-size: 14px; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 20px; }
+    .btn-submit:hover { background: #0369a1; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Permit To Work (PTW)</h2>
+    <h3>Cold Work - Perbaikan Mekanik</h3>
+    
+    <form id="coldForm">
+      <div class="section-title">a. Deskripsi Pekerjaan</div>
+      <div class="form-group"><label>Perusahaan / Kontraktor Pemohon</label><input type="text" id="pemohon" placeholder="Contoh: PT. Jambi Mekanikal" required></div>
+            <div class="form-group">
+        <label>Pilih Stasiun / Area Kerja Utama</label>
+        <select id="stasiun" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; outline: none; background: white;" required>
+          <option value="">-- Pilih Area Kerja --</option>
+          <option value="Sungai Kenawang ( SKN )">Sungai Kenawang ( SKN )</option>
+          <option value="Pulai Gading ( PGD )">Pulai Gading ( PGD )</option>
+          <option value="TGI METERING ( TGI )">TGI METERING ( TGI )</option>
+          <option value="GRISSIK METERING ( GRS )">GRISSIK METERING ( GRS )</option>
+          <option value="NORTH GERGAI FACILITY ( NGF )">NORTH GERGAI FACILITY ( NGF )</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Titik Lokasi Spesifik Pekerjaan (Cold Work Area)</label>
+        <select id="titik_spesifik" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; outline: none; background: white;" required>
+          <option value="">-- Pilih Titik Kerja Dingin --</option>
+          <option value="Gedung Administrasi / Main Office">Gedung Administrasi / Main Office</option>
+          <option value="Warehouse & Logistik">Warehouse & Logistik</option>
+          <option value="Gedung Listrik / MCC Room">Gedung Listrik / MCC Room</option>
+          <option value="Workshop Mekanik & Sipil">Workshop Mekanik & Sipil</option>
+          <option value="Akses Jalan Raya & Area Parkir Dalam">Akses Jalan Raya & Area Parkir Dalam</option>
+        </select>
+      </div>
+
+         <div class="form-group"><label>Lama Pengerjaan</label><input type="text" id="lama" placeholder="Contoh: 3 Hari" required></div>
+         <input type="text" class="form-control" id="lokasi" placeholder="Contoh: Penggantian Bearing Overhead Compressor" required>
+      <div class="section-title">b. Identifikasi Bahaya dan Resiko (Cold Work)</div>
+      <div class="box-info"><strong>Hazard:</strong> Jepitan Mesin / Tergores / Tersandung / Hantaman Perkakas Tangan</div>
+      <div class="box-info"><strong>Control Wajib:</strong> Pemasangan LOTO (Lockout Tagout), Sarung Tangan Kain, Safety Helmet, Safety Shoes, dan barikade area kerja.</div>
+
+      <button type="submit" class="btn-submit">Ajukan Permit Cold Work</button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('coldForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+     var areaGabungan = document.getElementById('stasiun').value + " - " + document.getElementById('titik_spesifik').value;
+      var deskripsiTambahan = " (Lama: " + document.getElementById('lama').value + " | Personel: " + document.getElementById('personel').value + " orang | Gas Test: " + gas + ")";
+      
+      fetch('/api/ptw', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          pemohon: document.getElementById('pemohon').value,
+          jenis: 'Hot Work - Naked Flame',
+          lokasi: areaGabungan + deskripsiTambahan, // Menggabungkan stasiun dan titik spesifik secara otomatis
+          apd: apdHot
+        })
+      }).then(function(){ window.location.href = '/'; });
+    });
+  </script>
+</body>
+</html>

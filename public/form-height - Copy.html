@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PTW - Working at Height</title>
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; background: #f1f5f9; padding: 20px; color: #1e293b; }
+    .card { background: white; padding: 30px; border-radius: 12px; max-width: 650px; margin: 0 auto; border-top: 6px solid #10b981; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    h2 { color: #10b981; text-align: center; margin-bottom: 5px; font-size: 20px; }
+    h3 { text-align: center; font-size: 13px; color: #64748b; margin-bottom: 25px; font-weight: normal; }
+    .section-title { font-size: 14px; font-weight: bold; color: #10b981; margin: 20px 0 10px 0; border-bottom: 1px dashed #cbd5e1; padding-bottom: 4px; }
+    .form-group { margin-bottom: 15px; }
+    label { display: block; font-size: 12px; font-weight: bold; color: #475569; margin-bottom: 6px; }
+    input[type="text"], input[type="number"] { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; outline: none; }
+    input:focus { border-color: #10b981; }
+    .box-info { background: #f8fafc; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0; font-size: 12px; margin-bottom: 8px; }
+    .box-info strong { color: #10b981; }
+    .btn-submit { width: 100%; padding: 14px; background: #10b981; color: white; border: none; font-size: 14px; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 20px; }
+    .btn-submit:hover { background: #047857; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Permit To Work (PTW)</h2>
+    <h3>Working at Height - Ketinggian</h3>
+    
+    <form id="heightForm">
+      <div class="section-title">a. Deskripsi Pekerjaan</div>
+      <div class="form-group"><label>Perusahaan / Kontraktor Pemohon</label><input type="text" id="pemohon" placeholder="Contoh: PT. Jambi Scaffolding Utama" required></div>
+            <div class="form-group">
+        <label>Pilih Stasiun / Area Kerja Utama</label>
+        <select id="stasiun" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; outline: none; background: white;" required>
+          <option value="">-- Pilih Area Kerja --</option>
+          <option value="Sungai Kenawang ( SKN )">Sungai Kenawang ( SKN )</option>
+          <option value="Pulai Gading ( PGD )">Pulai Gading ( PGD )</option>
+          <option value="TGI METERING ( TGI )">TGI METERING ( TGI )</option>
+          <option value="GRISSIK METERING ( GRS )">GRISSIK METERING ( GRS )</option>
+          <option value="NORTH GERGAI FACILITY ( NGF )">NORTH GERGAI FACILITY ( NGF )</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Titik Lokasi Spesifik Pekerjaan (Ketinggian Area)</label>
+        <select id="titik_spesifik" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; outline: none; background: white;" required>
+          <option value="">-- Pilih Titik Area Ketinggian --</option>
+          <option value="Struktur Flare Stack Tower">Struktur Flare Stack Tower</option>
+          <option value="Roof Top Gedung Kantor / Gudang">Roof Top Gedung Kantor / Gudang</option>
+          <option value="Struktur Scaffolding Kilang SGC">Struktur Scaffolding Kilang SGC</option>
+          <option value="Area Tangki Atas / Tank Roof Walkway">Area Tangki Atas / Tank Roof Walkway</option>
+          <option value="Overhead Crane & Pipe Rack Gantry">Overhead Crane & Pipe Rack Gantry</option>
+        </select>
+      </div>
+
+      <div class="form-group"><label>Ketinggian Area Kerja (Meter dari Tanah)</label><input type="text" id="tinggi" placeholder="Contoh: 15 Meter" required></div>
+      <input type="text" class="form-control" id="lokasi" placeholder="Contoh: Penggatian sensor flare termocouple/penggantian lampu jalan" required>
+
+      <div class="section-title">b. Identifikasi Bahaya dan Resiko (Working at Height)</div>
+      <div class="box-info"><strong>Hazard:</strong> Jatuh dari Ketinggian / Benda Jatuh Menimpa Orang di Bawah / Struktur Scaffolding Rubuh</div>
+      <div class="box-info"><strong>Control Wajib:</strong> Penggunaan Full Body Harness Double Lanyard (Dikaitkan 100%), Pemasangan Safety Net/Drop Cloth, dan Scaffolding ber-tag HIJAU (Aman).</div>
+
+      <button type="submit" class="btn-submit">Ajukan Permit Ketinggian</button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('heightForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+           var areaGabungan = document.getElementById('stasiun').value + " - " + document.getElementById('titik_spesifik').value;
+      var deskripsiTambahan = " (Lama: " + document.getElementById('lama').value + " | Personel: " + document.getElementById('personel').value + " orang | Gas Test: " + gas + ")";
+      
+      fetch('/api/ptw', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          pemohon: document.getElementById('pemohon').value,
+          jenis: 'Hot Work - Naked Flame',
+          lokasi: areaGabungan + deskripsiTambahan, // Menggabungkan stasiun dan titik spesifik secara otomatis
+          apd: apdHot
+        })
+      }).then(function(){ window.location.href = '/'; });
+
+    });
+  </script>
+</body>
+</html>

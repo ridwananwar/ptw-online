@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PTW - Hot Work (Naked Flame)</title>
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; background: #f1f5f9; padding: 20px; color: #1e293b; }
+    .card { background: white; padding: 30px; border-radius: 12px; max-width: 650px; margin: 0 auto; border-top: 6px solid #ef4444; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    h2 { color: #ef4444; text-align: center; margin-bottom: 5px; font-size: 20px; }
+    h3 { text-align: center; font-size: 13px; color: #64748b; margin-bottom: 25px; font-weight: normal; }
+    .section-title { font-size: 14px; font-weight: bold; color: #ef4444; margin: 20px 0 10px 0; border-bottom: 1px dashed #cbd5e1; padding-bottom: 4px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    .form-group { margin-bottom: 15px; }
+    label { display: block; font-size: 12px; font-weight: bold; color: #475569; margin-bottom: 6px; }
+    input[type="text"], input[type="number"], select { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; outline: none; background: white; }
+    input:focus, select:focus { border-color: #ef4444; }
+    .box-info { background: #f8fafc; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0; font-size: 12px; margin-bottom: 8px; }
+    .box-info strong { color: #ef4444; }
+    .radio-group { display: flex; gap: 20px; margin-top: 5px; font-size: 13px; font-weight: bold; }
+    .btn-submit { width: 100%; padding: 14px; background: #ef4444; color: white; border: none; font-size: 14px; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 20px; }
+    .btn-submit:hover { background: #b91c1c; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Permit To Work (PTW)</h2>
+    <h3>Hot Work - Naked Flame</h3>
+    
+    <form id="hotForm">
+      <div class="section-title">a. Deskripsi Pekerjaan</div>
+      
+      <div class="form-group">
+        <label>Perusahaan / Kontraktor Pemohon</label>
+        <input type="text" id="pemohon" placeholder="Contoh: PT. Vanessa Mandiri" required>
+      </div>
+      
+      <div class="form-group">
+        <label>Pilih Stasiun / Area Kerja Utama</label>
+        <select id="stasiun" required>
+          <option value="">-- Pilih Area Kerja --</option>
+          <option value="Sungai Kenawang ( SKN )">Sungai Kenawang ( SKN )</option>
+          <option value="Pulai Gading ( PGD )">Pulai Gading ( PGD )</option>
+          <option value="TGI METERING ( TGI )">TGI METERING ( TGI )</option>
+          <option value="GRISSIK METERING ( GRS )">GRISSIK METERING ( GRS )</option>
+          <option value="NORTH GERGAI FACILITY ( NGF )">NORTH GERGAI FACILITY ( NGF )</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        
+      <div class="form-group">
+        <label>Titik Lokasi Spesifik Pekerjaan (Hot Work Area)</label>
+        <select id="titik_spesifik" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; outline: none; background: white;" required>
+          <option value="">-- Pilih Titik Kerja Panas --</option>
+          <option value="Area Manifold SGC">Area Manifold SGC</option>
+          <option value="Separator Area & Production Lines">Separator Area & Production Lines</option>
+          <option value="Flare Stack & Burn Pit Area">Flare Stack & Burn Pit Area</option>
+          <option value="Workshop Pengelasan / Fabrication Shop">Workshop Pengelasan / Fabrication Shop</option>
+          <option value="Wellhead Platform">Wellhead Platform</option>
+        </select>
+      </div>
+        <input type="text" id="titik_spesifik" placeholder="Contoh: Pengelasan/Gerinda SpoolPipe Casing" required>
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label>Lama Pengerjaan (Hari/Jam)</label>
+          <input type="text" id="lama" placeholder="Contoh: 12 Jam" required>
+        </div>
+        <div class="form-group">
+          <label>Jumlah Personel yang Terlibat</label>
+          <input type="number" id="personel" value="0" min="1" required>
+        </div>
+      </div>
+
+      <div class="section-title">b. Identifikasi Bahaya dan Resiko (Hot Work)</div>
+      <div class="box-info"><strong>Hazard:</strong> Hot Surface / Exhausts / Percikan Api / Radiasi Panas</div>
+      <div class="box-info"><strong>Control Wajib:</strong> Menyediakan APAR standby, Fire Blanket, Isolasi bahan mudah terbakar, Welding Mask, dan Leather Gloves.</div>
+
+      <div class="section-title">c. Permohonan Gas Test (Wajib untuk Gas Berbahaya)</div>
+      <div class="form-group">
+        <label>Apakah memerlukan pengujian gas kandungan atmosfer sebelum hot work?</label>
+        <div class="radio-group">
+          <label><input type="radio" name="gas_test" value="YES" checked> YES</label>
+          <label><input type="radio" name="gas_test" value="NO"> NO</label>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-submit">Ajukan Permit Hot Work</button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('hotForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // Ambil nilai radio button Gas Test
+      var gas = document.querySelector('input[name="gas_test"]:checked').value;
+      
+      // Mengunci APD standar wajib Hot Work masuk database
+      var apdHot = ["Safety Helmet", "Safety Shoes", "Welding Mask", "Leather Gloves", "Standby APAR"];
+      
+      // Menggabungkan pilihan Stasiun Utama dengan Teks input Spesifik Pekerjaan Bapak
+      var areaGabungan = document.getElementById('stasiun').value + " - " + document.getElementById('titik_spesifik').value;
+      
+      // Mengemas detail tambahan agar tercetak rapi di tabel monitoring induk
+      var detailTambahan = " (Lama: " + document.getElementById('lama').value + " | Personel: " + document.getElementById('personel').value + " Orang | Gas Test: " + gas + ")";
+      
+      var dataKirim = {
+        pemohon: document.getElementById('pemohon').value,
+        jenis: "Hot Work - Naked Flame",
+        lokasi: areaGabungan + detailTambahan,
+        apd: apdHot
+      };
+
+      // Tembak data menuju sirkuit database SQLite3
+      fetch('/api/ptw', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dataKirim)
+      })
+      .then(function(res) { 
+        return res.json(); 
+      })
+      .then(function() {
+        // Berhasil! Langsung lempar halaman kembali ke Dashboard Utama
+        window.location.href = '/';
+      })
+      .catch(function(err) {
+        alert("Gagal mengirim registrasi form ke server!");
+      });
+    });
+  </script>
+</body>
+</html>
