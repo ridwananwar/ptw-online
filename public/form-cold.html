@@ -77,47 +77,57 @@
       <div class="box-info"><strong>Hazard:</strong> Jepitan Mesin / Tergores / Tersandung / Hantaman Perkakas Tangan</div>
       <div class="box-info"><strong>Control Wajib:</strong> Pemasangan LOTO (Lockout Tagout) jika diperlukan, Sarung Tangan Kain, Safety Helmet, Safety Shoes, dan barikade area kerja.</div>
 
+            <!-- FITUR BARU: UPLOAD DOKUMEN HSSE PENDUKUNG -->
+      <div class="form-group" style="margin-top: 25px;">
+        <label>Upload Dokumen Pendukung (JSA / L2RA / Sertifikat K3)</label>
+        <input type="file" id="dokumen_lampiran" accept="image/*,.pdf" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; background: #f8fafc;">
+        <small style="color: #64748b; font-size: 11px; display: block; margin-top: 4px;">* Anda bisa mengunggah foto JSA langsung dari kamera HP atau file PDF.</small>
+      </div>
+
       <button type="submit" class="btn-submit">Ajukan Permit Cold Work</button>
+
     </form>
   </div>
 
   <script>
-    document.getElementById('coldForm').addEventListener('submit', function(e) {
+        document.getElementById('coldForm').addEventListener('submit', function(e) {
       e.preventDefault();
       
-      // Mengunci APD standar wajib Cold Work masuk database
       var apdCold = ["Safety Helmet", "Safety Shoes", "Cotton Gloves", "Barricade Tape"];
-      
-      // Menggabungkan pilihan Stasiun Utama dengan Teks input Spesifik Pekerjaan Bapak
       var areaGabungan = document.getElementById('stasiun').value + " - " + document.getElementById('titik_spesifik').value;
-      
-      // Mengemas detail tambahan agar tercetak rapi di tabel monitoring induk
       var detailTambahan = " (Lama: " + document.getElementById('lama').value + " | Personel: " + document.getElementById('personel').value + " Orang)";
       
-      var dataKirim = {
-        pemohon: document.getElementById('pemohon').value,
-        jenis: "Cold Work - Perbaikan Mekanik",
-        lokasi: areaGabungan + detailTambahan,
-        apd: apdCold
-      };
+      var fileInput = document.getElementById('dokumen_lampiran');
+      var berkasFile = fileInput.files[0];
+      
+      function kirimDataPermit(stringBerkas) {
+        var dataKirim = {
+          pemohon: document.getElementById('pemohon').value,
+          jenis: "Cold Work - Perbaikan Mekanik",
+          lokasi: areaGabungan + detailTambahan,
+          apd: apdCold,
+          lampiran: stringBerkas || ""
+        };
 
-      // FIX UTAMA: Menyinkronkan respons data JSON server agar bypass penguncian SQLite3
-      fetch('/api/ptw', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(dataKirim)
-      })
-      .then(function(res) { 
-        return res.json(); 
-      })
-      .then(function(data) {
-        // Sukses! Langsung lempar halaman kembali ke Dashboard Utama
-        window.location.href = '/';
-      })
-      .catch(function(err) {
-        alert("Gagal mengirim registrasi form ke server!");
-      });
+        fetch('/api/ptw', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(dataKirim)
+        })
+        .then(function(res) { return res.json(); })
+        .then(function() { window.location.href = '/'; })
+        .catch(function() { alert("Gagal mengirim data ke server!"); });
+      }
+
+      if (berkasFile) {
+        var pembaca = new FileReader();
+        pembaca.onload = function(event) { kirimDataPermit(event.target.result); };
+        pembaca.readAsDataURL(berkasFile);
+      } else {
+        kirimDataPermit("");
+      }
     });
+
   </script>
 </body>
 </html>

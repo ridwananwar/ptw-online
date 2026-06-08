@@ -62,23 +62,45 @@
     </form>
   </div>
 
-  <script>
+   <script>
     document.getElementById('heightForm').addEventListener('submit', function(e) {
       e.preventDefault();
-           var areaGabungan = document.getElementById('stasiun').value + " - " + document.getElementById('titik_spesifik').value;
-      var deskripsiTambahan = " (Lama: " + document.getElementById('lama').value + " | Personel: " + document.getElementById('personel').value + " orang | Gas Test: " + gas + ")";
       
-      fetch('/api/ptw', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          pemohon: document.getElementById('pemohon').value,
-          jenis: 'Hot Work - Naked Flame',
-          lokasi: areaGabungan + deskripsiTambahan, // Menggabungkan stasiun dan titik spesifik secara otomatis
-          apd: apdHot
-        })
-      }).then(function(){ window.location.href = '/'; });
+      // Mengunci APD Wajib Ketinggian masuk database
+      var apdHeight = ["Full Body Harness", "Double Lanyard", "Safety Helmet", "Safety Shoes", "Scaffolding Green Tag"];
+      
+      // Menggabungkan pilihan Stasiun Utama dengan Pilihan Titik Spesifik Ketinggian
+      var areaGabungan = document.getElementById('stasiun').value + " - " + document.getElementById('titik_spesifik').value;
+      
+      // Mengemas detail tambahan tinggi area kerja
+      var detailTambahan = " (Tinggi Area: " + document.getElementById('tinggi').value + " | Proteksi: Harness Ter-anchor)";
+      
+      var dataKirim = {
+        pemohon: document.getElementById('pemohon').value,
+        jenis: "Working at Height - Ketinggian",
+        locations: areaGabungan + detailTambahan, // Diarahkan ke data lokasi database
+        lokasi: areaGabungan + detailTambahan,
+        apd: apdHeight
+      };
 
+      // FIX SIRKUIT UTAMA: Mengambil respons JSON server agar SQLite3 sukses mengunci data
+      fetch('/api/ptw', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dataKirim)
+      })
+      .then(function(res) { 
+        return res.json(); 
+      })
+      .then(function(data) {
+        // Sukses! Langsung lempar halaman kembali ke Dashboard Utama
+        window.location.href = '/';
+      })
+      .catch(function(err) {
+        alert("Gagal mengirim registrasi form ke server!");
+      });
     });
   </script>
 </body>
 </html>
+

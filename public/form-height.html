@@ -57,49 +57,59 @@
       <div class="section-title">b. Identifikasi Bahaya dan Resiko (Working at Height)</div>
       <div class="box-info"><strong>Hazard:</strong> Jatuh dari Ketinggian / Benda Jatuh Menimpa Orang di Bawah / Struktur Scaffolding Rubuh</div>
       <div class="box-info"><strong>Control Wajib:</strong> Penggunaan Full Body Harness Double Lanyard (Dikaitkan 100%), Pemasangan Safety Net/Drop Cloth, dan Scaffolding ber-tag HIJAU (Aman).</div>
+      <!-- FITUR BARU: UPLOAD DOKUMEN HSSE PENDUKUNG -->
+      <div class="form-group" style="margin-top: 25px;">
+        <label>Upload Dokumen Pendukung (JSA / L2RA / Sertifikat K3)</label>
+        <input type="file" id="dokumen_lampiran" accept="image/*,.pdf" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; background: #f8fafc;">
+        <small style="color: #64748b; font-size: 11px; display: block; margin-top: 4px;">* Anda bisa mengunggah foto JSA langsung dari kamera HP atau file PDF.</small>
+      </div>
 
-      <button type="submit" class="btn-submit">Ajukan Permit Ketinggian</button>
+      <button type="submit" class="btn-submit">Ajukan Permit Working at Height</button>
+
+      
     </form>
   </div>
 
    <script>
-    document.getElementById('heightForm').addEventListener('submit', function(e) {
+        document.getElementById('heightForm').addEventListener('submit', function(e) {
       e.preventDefault();
       
-      // Mengunci APD Wajib Ketinggian masuk database
       var apdHeight = ["Full Body Harness", "Double Lanyard", "Safety Helmet", "Safety Shoes", "Scaffolding Green Tag"];
-      
-      // Menggabungkan pilihan Stasiun Utama dengan Pilihan Titik Spesifik Ketinggian
       var areaGabungan = document.getElementById('stasiun').value + " - " + document.getElementById('titik_spesifik').value;
-      
-      // Mengemas detail tambahan tinggi area kerja
       var detailTambahan = " (Tinggi Area: " + document.getElementById('tinggi').value + " | Proteksi: Harness Ter-anchor)";
       
-      var dataKirim = {
-        pemohon: document.getElementById('pemohon').value,
-        jenis: "Working at Height - Ketinggian",
-        locations: areaGabungan + detailTambahan, // Diarahkan ke data lokasi database
-        lokasi: areaGabungan + detailTambahan,
-        apd: apdHeight
-      };
+      var fileInput = document.getElementById('dokumen_lampiran');
+      var berkasFile = fileInput.files[0];
+      
+      function kirimDataPermit(stringBerkas) {
+        var dataKirim = {
+          pemohon: document.getElementById('pemohon').value,
+          jenis: "Working at Height - Ketinggian",
+          locations: areaGabungan + detailTambahan,
+          lokasi: areaGabungan + detailTambahan,
+          apd: apdHeight,
+          lampiran: stringBerkas || ""
+        };
 
-      // FIX SIRKUIT UTAMA: Mengambil respons JSON server agar SQLite3 sukses mengunci data
-      fetch('/api/ptw', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(dataKirim)
-      })
-      .then(function(res) { 
-        return res.json(); 
-      })
-      .then(function(data) {
-        // Sukses! Langsung lempar halaman kembali ke Dashboard Utama
-        window.location.href = '/';
-      })
-      .catch(function(err) {
-        alert("Gagal mengirim registrasi form ke server!");
-      });
+        fetch('/api/ptw', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(dataKirim)
+        })
+        .then(function(res) { return res.json(); })
+        .then(function() { window.location.href = '/'; })
+        .catch(function() { alert("Gagal mengirim data ke server!"); });
+      }
+
+      if (berkasFile) {
+        var pembaca = new FileReader();
+        pembaca.onload = function(event) { kirimDataPermit(event.target.result); };
+        pembaca.readAsDataURL(berkasFile);
+      } else {
+        kirimDataPermit("");
+      }
     });
+
   </script>
 </body>
 </html>

@@ -54,31 +54,23 @@ app.get('/api/ptw', (req, res) => {
     });
 });
 
-// API INPUT FORM PTW BARU
+// API INPUT FORM PTW BARU DENGAN DUKUNGAN LAMPIRAN FILE DOKUMEN HSSE
 app.post('/api/ptw', (req, res) => {
-    const { pemohon, jenis, lokasi, apd } = req.body;
+    // Menarik data pemohon, jenis, lokasi, apd, dan lampiran file baru dari frontend
+    const { pemohon, jenis, lokasi, apd, lampiran } = req.body;
     const stringAPD = Array.isArray(apd) ? apd.join(', ') : '';
 
-    const queryInsert = 'INSERT INTO ptw_records (pemohon, jenis, lokasi, apd) VALUES (?, ?, ?, ?)';
-    db.run(queryInsert, [pemohon, jenis, lokasi, stringAPD], function(err) {
-        if (err) return res.status(500).json({ success: false, error: err.message });
-        res.json({ success: true });
-    });
-});
-
-// API PROSES DATA APPROVAL TANDA TANGAN
-app.post('/api/approve-ptw-digital/:id', (req, res) => {
-    const id = parseInt(req.params.id);
-    const { tandaTangan } = req.body;
-
-    db.serialize(() => {
-        const queryUpdate = 'UPDATE ptw_records SET status = "Approved / Aktif", tandaTangan = ? WHERE id = ?';
-        db.run(queryUpdate, [tandaTangan, id], function(err) {
-            if (err) return res.status(500).json({ success: false });
+    // Modifikasi tabel SQLite3 otomatis secara aman jika kolom lampiran belum terdaftar
+    db.run("ALTER TABLE ptw_records ADD COLUMN lampiran TEXT", [], () => {
+        // Abaikan eror jika kolom sudah terlanjur ada di database lama Bapak
+        const queryInsert = 'INSERT INTO ptw_records (pemohon, jenis, lokasi, apd, lampiran) VALUES (?, ?, ?, ?, ?)';
+        db.run(queryInsert, [pemohon, jenis, lokasi, stringAPD, lampiran || null], function(err) {
+            if (err) return res.status(500).json({ success: false, error: err.message });
             res.json({ success: true });
         });
     });
 });
+
 
 // =========================================================================
 // RUTE CETAK FINAL: PENATAAN UKURAN MATEMATIKA KERTAS (DIJAMIN CENTER & RESMI)

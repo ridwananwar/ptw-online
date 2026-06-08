@@ -87,50 +87,62 @@
         </div>
       </div>
 
+      <!-- FITUR BARU: UPLOAD DOKUMEN HSSE PENDUKUNG -->
+      <div class="form-group" style="margin-top: 25px;">
+        <label>Upload Dokumen Pendukung (JSA / L2RA / Sertifikat K3)</label>
+        <input type="file" id="dokumen_lampiran" accept="image/*,.pdf" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; background: #f8fafc;">
+        <small style="color: #64748b; font-size: 11px; display: block; margin-top: 4px;">* Anda bisa mengunggah foto JSA langsung dari kamera HP atau file PDF.</small>
+      </div>
+
       <button type="submit" class="btn-submit">Ajukan Permit Hot Work</button>
     </form>
   </div>
 
   <script>
-    document.getElementById('hotForm').addEventListener('submit', function(e) {
+        document.getElementById('hotForm').addEventListener('submit', function(e) {
       e.preventDefault();
       
-      // Ambil nilai radio button Gas Test
       var gas = document.querySelector('input[name="gas_test"]:checked').value;
-      
-      // Mengunci APD standar wajib Hot Work masuk database
       var apdHot = ["Safety Helmet", "Safety Shoes", "Welding Mask", "Leather Gloves", "Standby APAR"];
-      
-      // Menggabungkan pilihan Stasiun Utama dengan Teks input Spesifik Pekerjaan Bapak
       var areaGabungan = document.getElementById('stasiun').value + " - " + document.getElementById('titik_spesifik').value;
-      
-      // Mengemas detail tambahan agar tercetak rapi di tabel monitoring induk
       var detailTambahan = " (Lama: " + document.getElementById('lama').value + " | Personel: " + document.getElementById('personel').value + " Orang | Gas Test: " + gas + ")";
       
-      var dataKirim = {
-        pemohon: document.getElementById('pemohon').value,
-        jenis: "Hot Work - Naked Flame",
-        lokasi: areaGabungan + detailTambahan,
-        apd: apdHot
-      };
+      // Ambil elemen berkas yang diupload user
+      var fileInput = document.getElementById('dokumen_lampiran');
+      var berkasFile = fileInput.files[0];
+      
+      // Fungsi internal untuk menembak data ke database setelah berkas selesai dibaca
+      function kirimDataPermit(stringBerkas) {
+        var dataKirim = {
+          pemohon: document.getElementById('pemohon').value,
+          jenis: "Hot Work - Naked Flame",
+          lokasi: areaGabungan + detailTambahan,
+          apd: apdHot,
+          lampiran: stringBerkas || "" // Mengunci teks string berkas ke database backend
+        };
 
-      // Tembak data menuju sirkuit database SQLite3
-      fetch('/api/ptw', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(dataKirim)
-      })
-      .then(function(res) { 
-        return res.json(); 
-      })
-      .then(function() {
-        // Berhasil! Langsung lempar halaman kembali ke Dashboard Utama
-        window.location.href = '/';
-      })
-      .catch(function(err) {
-        alert("Gagal mengirim registrasi form ke server!");
-      });
+        fetch('/api/ptw', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(dataKirim)
+        })
+        .then(function(res) { return res.json(); })
+        .then(function() { window.location.href = '/'; })
+        .catch(function() { alert("Gagal mengirim data ke server!"); });
+      }
+
+      // Logika pembacaan berkas otomatis jika user melampirkan file dari HP
+      if (berkasFile) {
+        var pembaca = new FileReader();
+        pembaca.onload = function(event) {
+          kirimDataPermit(event.target.result); // Kirim bersama data file biner base64
+        };
+        pembaca.readAsDataURL(berkasFile);
+      } else {
+        kirimDataPermit(""); // Kirim kosong jika user tidak mengupload dokumen apa pun
+      }
     });
+
   </script>
 </body>
 </html>

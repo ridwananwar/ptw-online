@@ -74,47 +74,57 @@
       <div class="box-info"><strong>Hazard:</strong> Kekurangan Oksigen / Akumulasi Gas Beracun (H2S / CO) / Ruang Sempit Terperangkap</div>
       <div class="box-info"><strong>Control Wajib:</strong> Forced Ventilation (Blower), Gas Detector Terkalibrasi, Petugas Jaga Standby di Luar, dan SCBA terpasang dekat manhole.</div>
 
+            <!-- FITUR BARU: UPLOAD DOKUMEN HSSE PENDUKUNG -->
+      <div class="form-group" style="margin-top: 25px;">
+        <label>Upload Dokumen Pendukung (JSA / L2RA / Sertifikat K3)</label>
+        <input type="file" id="dokumen_lampiran" accept="image/*,.pdf" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; background: #f8fafc;">
+        <small style="color: #64748b; font-size: 11px; display: block; margin-top: 4px;">* Anda bisa mengunggah foto JSA langsung dari kamera HP atau file PDF.</small>
+      </div>
+
       <button type="submit" class="btn-submit">Ajukan Permit Confined Space</button>
+
     </form>
   </div>
 
   <script>
-    document.getElementById('confForm').addEventListener('submit', function(e) {
+        document.getElementById('confForm').addEventListener('submit', function(e) {
       e.preventDefault();
       
-      // Mengunci APD & Safety Alat Confined Space masuk database
       var apdConf = ["Gas Detector", "SCBA Apparatus", "Forced Blower", "Safety Helmet", "Safety Shoes"];
-      
-      // Menggabungkan pilihan Stasiun Utama dengan Pilihan Titik Spesifik Ruang Terbatas
       var areaGabungan = document.getElementById('stasiun').value + " - " + document.getElementById('titik_spesifik').value;
-      
-      // Mengemas detail tambahan nama Fire Watcher petugas jaga luar
       var detailTambahan = " (Watcher: " + document.getElementById('watcher').value + " | Monitor Udara: Aktif)";
       
-      var dataKirim = {
-        pemohon: document.getElementById('pemohon').value,
-        jenis: "Confined Space - Ruang Terbatas",
-        lokasi: areaGabungan + detailTambahan,
-        apd: apdConf
-      };
+      var fileInput = document.getElementById('dokumen_lampiran');
+      var berkasFile = fileInput.files[0];
+      
+      function kirimDataPermit(stringBerkas) {
+        var dataKirim = {
+          pemohon: document.getElementById('pemohon').value,
+          jenis: "Confined Space - Ruang Terbatas",
+          lokasi: areaGabungan + detailTambahan,
+          apd: apdConf,
+          lampiran: stringBerkas || ""
+        };
 
-      // FIX SIRKUIT UTAMA: Mengambil respons JSON server agar SQLite3 sukses mengunci data
-      fetch('/api/ptw', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(dataKirim)
-      })
-      .then(function(res) { 
-        return res.json(); 
-      })
-      .then(function(data) {
-        // Sukses! Langsung lempar halaman kembali ke Dashboard Utama
-        window.location.href = '/';
-      })
-      .catch(function(err) {
-        alert("Gagal mengirim registrasi form ke server!");
-      });
+        fetch('/api/ptw', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(dataKirim)
+        })
+        .then(function(res) { return res.json(); })
+        .then(function() { window.location.href = '/'; })
+        .catch(function() { alert("Gagal mengirim data ke server!"); });
+      }
+
+      if (berkasFile) {
+        var pembaca = new FileReader();
+        pembaca.onload = function(event) { kirimDataPermit(event.target.result); };
+        pembaca.readAsDataURL(berkasFile);
+      } else {
+        kirimDataPermit("");
+      }
     });
+
   </script>
 </body>
 </html>
